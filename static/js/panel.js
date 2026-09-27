@@ -71,7 +71,10 @@ function addCellEvents(cell, item) {
 
 // TODO: will this fire more than once and fuck things up?
 twitch.onAuthorized(auth => {
-    twitch.actions.requestIdShare()
+    if (!twitch.viewer.isLinked) {
+        twitch.actions.requestIdShare()
+        return
+    }
 
     console.log(auth)
     let target = `whisper-${auth.userId}`
