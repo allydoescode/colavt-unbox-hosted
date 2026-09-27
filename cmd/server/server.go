@@ -127,10 +127,11 @@ func main() {
 
 	wrappedMux := chain(mux, logging, cors)
 
-	tlsCertPath := os.Getenv("TLS_CERTIFICATE_PATH")
-	tlsKeyPath := os.Getenv("TLS_KEY_PATH")
+	// tlsCertPath := os.Getenv("TLS_CERTIFICATE_PATH")
+	// tlsKeyPath := os.Getenv("TLS_KEY_PATH")
 
-	err := http.ListenAndServeTLS("localhost:8080", tlsCertPath, tlsKeyPath, wrappedMux)
+	// err := http.ListenAndServeTLS("localhost:8080", tlsCertPath, tlsKeyPath, wrappedMux)
+	err := http.ListenAndServe("0.0.0.0:8080", wrappedMux)
 	if err != nil {
 		log.Fatal(err)
 	}
