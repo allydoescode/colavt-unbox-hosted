@@ -1,0 +1,191 @@
+@font-face {
+    font-family: "A Aha Wow";
+    src: url("/static/ttf/aahawow.ttf") format("truetype");
+}
+* {
+    box-sizing: border-box;
+}
+body {
+    font-family: "A Aha Wow";
+    color: white;
+
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 1s ease;
+}
+.dimmed {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+.roller {
+    height: 256px;
+    position: relative;
+    margin: 60px auto 30px auto;
+    width: 1600px;
+    transform: translateY(100%);
+}
+.roller-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 256px;
+    width: 100%;
+    overflow: hidden;
+}
+.roller-holder:before {
+    content: "";
+    position: absolute;
+    border: none;
+    z-index: 1;
+    width: 5px;
+    height: 100%;
+    left: 50%;
+    background: rgba(255, 255, 255, 0.5);
+}
+.roller-container {
+    width: 999999px;
+    max-width: 999999px;
+    height: 256px;
+    margin-left: 0;
+}
+.roller-container div {
+    display: block;
+    float: left;
+    margin: 4px 0px 0.5px 5px;
+    width: 256px;
+    height: 256px;
+    border: 1px solid rgba(0, 0, 0, 0);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.item-container {
+    display: none;
+}
+.item-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -65%);
+}
+.item-display img {
+    position: relative;
+    width: 512px;
+    height: 512px;
+}
+.item-display-info {
+    position: relative;
+    left: 25%;
+    font-size: 40px;
+    transform: translateY(400%);
+}
+
+.info-wrapper {
+    position: absolute;
+    left: 25vw;
+    top: 40vh;
+}
+
+.info-text {
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+    font-family: "A Aha Wow";
+    max-width: 60%;
+    color: white;
+    /* background-color: rgba(0, 0, 0, 0.75); */
+    /* border-left: 1rem solid rgb(75,105,205); */
+    padding: 0.25rem;
+
+    text-align: center;
+    margin: auto;
+
+    /* border: 5px solid rgba(0, 0, 0, 0.25);
+    border-radius: 10px; */
+
+    position: relative;
+    top: -25vh;
+}
+.info-text p:nth-child(1) {
+    font-size: 3rem;
+}
+.info-text p:nth-child(2) {
+    font-size: 2rem;
+}
+/* .item-name {
+    color: rgb(75,105,205);
+} */
+.info-image-container {
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.info-image {
+    height: 512px;
+    width: 512px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    z-index: -1;
+
+    background-image: url("/data/a5/51/a551655c414220687e6c35d5e464653e.png");
+    filter: drop-shadow(rgba(188, 230, 255, 0.75) 0px 0px 2em);
+}
+/* .clouds {
+    position: relative;
+    height: 1024px;
+    width: 1024px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('/static/img/clouds.gif');
+} */
+/* div + div {margin-top:-150px;} this is such a hack */
+
+.fade-visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 500ms linear;
+}
+/* .fade-hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 500ms, visibility 1s linear;
+} */
+
+.fade-hidden {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 500ms linear;
+}
+
+
+.spin-visible {
+    visibility: visible;
+    transform: rotate(360deg) scale(1);
+    transition: transform 500ms linear;
+}
+/* .spin-hidden {
+    visibility: hidden;
+    transform: rotate(0deg) scale(0);
+    transition: transform 500ms, visibility 1s linear;
+} */
+.spin-hidden {
+    visibility: visible;
+    transform: rotate(360deg) scale(1);
+    transition: transform 500ms linear;
+}
+
+.star {
+    z-index: -1;
+    position: absolute;
+    display: block;
+    width: 15px;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.75);
+    clip-path: polygon(50% 0,79% 90%,2% 35%,98% 35%,21% 90%);
+
+    opacity: 0;
+    transition: opacity 1s;
+}

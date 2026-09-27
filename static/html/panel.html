@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Smash Bros. Melee - Character Select</title>
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script defer src="/static/js/panel.js"></script>
+</head>
+<body>
+    <div class="twitch-extension-frame">
+        <div class="header"> COLAVT UNBOXATHON </div>
+
+        <div class="css-container">
+            <!-- Compact Spotlight Zone -->
+            <div class="spotlight-zone" id="spotlightZone">
+                <div class="spotlight-bg-text" id="spotlightBgText">CHOOSE</div>
+                <div class="spotlight-beam"></div>
+                <div class="spotlight-render" id="spotlightRender">❔</div>
+                <div class="spotlight-tagline" id="spotlightTagline">WHO WILL YOU BE?</div>
+            </div>
+
+            <!-- Scrollable 3-Wide Grid Container (Populated via JS) -->
+            <div class="character-grid" id="charGrid"></div>
+        </div>
+
+        <!-- Pop-Up Modal -->
+        <div class="modal-overlay" id="fighterModal">
+            <div class="modal-card" id="modalCard">
+                <div class="modal-badge-container">
+                    <span class="modal-rarity" id="modalRarity">COMMON</span>
+                </div>
+                <div class="modal-icon" id="modalIcon">🍄</div>
+                <h2 class="modal-title" id="modalTitle">MARIO</h2>
+                <p class="modal-desc" id="modalDesc">Fighter description...</p>
+                <button class="modal-close-btn" id="modalCloseBtn">BACK TO ROSTER</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

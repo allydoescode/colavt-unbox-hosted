@@ -1,0 +1,386 @@
+:root {
+  --common: #888888;
+  --uncommon: #6bbf00;
+  --rare: #00b5f2;
+  --epic: #8733c6;
+  --legendary: #f7cd0f;
+  
+  /* Delicate glass sheen variables */
+  --dynamic-glow: rgba(255, 255, 255, 0.1);
+  --dynamic-glow-solid: rgba(255, 255, 255, 0.2);
+  
+  /* Active winner aura background tracking color link */
+  --active-winner-color: #ff9800;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: transparent !important; 
+  color: #ffffff; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 🎬 CINEMATIC OVERLAY DIM LAYER BACKGROUND SHIELD */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Dark backdrop layer shield tint blend ratio (adjust 0.65 higher for a darker scene) */
+  background-color: rgba(0, 0, 0, 0.40); 
+  z-index: -2; /* Sits underneath your content elements safely */
+  opacity: 0;
+  transition: opacity 600ms cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
+  pointer-events: none;
+}
+
+/* Explicit toggle class to trigger ambient scene dimming */
+body.cinematic-dim::before {
+  opacity: 1;
+}
+
+/* Global Overlay Fade Wrapper */
+.unboxing-wrapper {
+  display: none; 
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 500ms cubic-bezier(0.25, 1, 0.5, 1), transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: opacity, transform;
+  width: 90vw;
+  max-width: 1200px; 
+}
+
+.unboxing-wrapper.show-structure {
+  display: flex;
+  justify-content: center;
+}
+
+.unboxing-wrapper.fade-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Smoothly hide the horizontal spinner track view when the prize modal overrides scene focus */
+.unboxing-wrapper.hide-spinner {
+  opacity: 0 !important;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.unboxing-container {
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Ultra-Transparent Frameless Spinner Viewport */
+.spinner-view {
+  position: relative;
+  width: 100%;
+  height: 220px; 
+  background-color: transparent !important; 
+  border: none !important;                  
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+/* Physical White Ticker Tab */
+.spinner-ticker {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 24px;
+  height: 35px;
+  margin-left: -12px; 
+  z-index: 10;
+  transform-origin: top center; 
+  transition: transform 40ms ease-out;
+  will-change: transform;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+}
+
+.spinner-ticker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 30px solid #ffffff; 
+}
+
+/* The Moving Tape Track */
+.spinner-tape {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  margin-left: -100px; 
+  top: 0;
+  height: 100%;
+  will-change: transform;
+}
+
+/* Very light translucent background cards (Glassmorphism) */
+.item-card {
+  flex-shrink: 0;
+  width: 200px; 
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.05); 
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 15px;
+}
+
+.item-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 8px; 
+  background-color: transparent;
+}
+
+.item-card.common::after { background-color: var(--common); }
+.item-card.uncommon::after { background-color: var(--uncommon); }
+.item-card.rare::after { background-color: var(--rare); }
+.item-card.epic::after { background-color: var(--epic); }
+.item-card.legendary::after { background-color: var(--legendary); }
+
+.item-card-image {
+  width: auto;
+  height: 160px;          /* Restricts image height to leave plenty of room for text below */
+  /* max-width: 85%;        Safeguards against wide weapon/item skin graphics stretching cards */
+  object-fit: contain;   /* Preserves image aspect-ratio without clipping or squishing */
+  margin-bottom: 12px;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.6));
+}
+
+.item-icon {
+  font-size: 4.2rem; 
+  margin-bottom: 12px;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.8));
+}
+
+.item-name {
+  font-size: 1.1rem; 
+  font-weight: 800;
+  white-space: nowrap;
+  /* overflow: hidden;
+  text-overflow: ellipsis; */
+  max-width: 100%;
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 3px 6px rgba(0,0,0,0.9);
+}
+
+/* Frameless History Dashboard Row */
+.history-dashboard {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+}
+
+.history-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.history-card::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 0;
+  width: 4px;
+  height: 70%;
+  border-radius: 4px;
+}
+.common-count::before { background-color: var(--common); }
+.rare-count::before { background-color: var(--rare); }
+.epic-count::before { background-color: var(--epic); }
+.legendary-count::before { background-color: var(--legendary); }
+
+.history-card .label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #ffffff;
+  margin-bottom: 4px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 2px 4px rgba(0,0,0,0.8);
+}
+
+.history-card .count-value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  will-change: transform;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 3px 6px rgba(0,0,0,0.9);
+}
+
+.history-card .count-value.pulse-hit {
+  animation: textPop 500ms cubic-bezier(0.175, 0.885, 0.32, 1.5);
+}
+
+@keyframes textPop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* Frameless Cinematic Container Override */
+.reveal-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent !important; 
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 500ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.reveal-modal.active {
+  display: flex;
+  opacity: 1;
+}
+
+.reveal-content-frameless {
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  transform: scale(0); 
+  position: relative;
+}
+
+/* Trigger impact scale animation wave */
+.reveal-modal.active .reveal-content-frameless {
+  animation: revealImpactScale 650ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Text outline presets for crisp readability anywhere */
+.reveal-rarity, .reveal-name, .reveal-description {
+  text-shadow: 
+    -2px -2px 0 #000,  
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0px  4px 10px rgba(0,0,0,0.95);
+}
+
+.reveal-rarity {
+  font-size: 2rem;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.reveal-prize-image {
+  width: auto;
+  height: 400px;         /* Blown up for high impact presentation layout placement */
+  max-width: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));
+}
+
+/* Large floating center prize item icon badge mapping an active ambient glow center loop aura */
+.reveal-icon {
+  margin: 15px 0;
+  animation: float 3.5s ease-in-out infinite;
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.reveal-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  background-color: var(--active-winner-color);
+  filter: blur(80px); 
+  opacity: 0.65;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+.reveal-name {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+/* Descriptive HUD container specification */
+.reveal-description {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 85%;
+  margin: 0 auto;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+/* Custom keyframes to scale oversized and snap down satisfyingly */
+@keyframes revealImpactScale {
+  0% {
+    transform: scale(0.3);
+    filter: brightness(2); 
+  }
+  50% {
+    transform: scale(1.2); 
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: scale(1.05); 
+    filter: brightness(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}

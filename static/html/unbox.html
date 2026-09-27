@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OBS Spinner Overlay</title>
+  <link rel="stylesheet" href="/static/css/unbox.css">
+</head>
+<body>
+
+  <!-- Global Overlay Fade Wrapper -->
+  <div class="unboxing-wrapper invisible" id="unboxingWrapper">
+    <div class="unboxing-container">
+      
+      <div class="spinner-view" id="spinnerView">
+        <div class="spinner-ticker" id="spinnerTicker"></div>
+        <div class="spinner-tape" id="spinnerTape"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎬 FRAMELESS REVEAL OVERLAY OVERRIDE -->
+  <div class="reveal-modal" id="revealModal">
+    <div class="reveal-content-frameless" id="revealContent">
+      <div class="reveal-rarity" id="revealRarity">Legendary</div>
+      <div class="reveal-icon" id="revealIcon"></div>
+      <div class="reveal-name" id="revealName">Excalibur</div>
+      <!-- 📝 NEW DESCRIPTION FIELD -->
+      <div class="reveal-description" id="revealDescription">A weapon forged for kings.</div>
+    </div>
+  </div>
+
+  <script type="module" src="/static/js/unbox/unbox.js"></script>
+</body>
+</html>

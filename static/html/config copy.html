@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title> unbox inventory </title>
+    </head>
+    <body>>
+        <table id="items-table">
+            <thead>
+                <tr> <th> Name </th> <th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button command="show-modal" commandfor="add-item-dialog"> Add Item </button>
+        <dialog id="add-item-dialog">
+            <label for="add-item-name"> Item Name: </label>
+            <input type="text" name="name" id="add-item-name" placeholder="Maddy Plush"/> <br />
+
+            <label for="add-item-description"> Item Description: </label>
+            <input type="textarea" name="description" id="add-item-description" placeholder="Super cool, really awesome, get while you can!"/> <br />
+
+            <label for="add-item-image"> Item Image: </label>
+            <input type="file" name="image" id="add-item-image"/> <br />
+
+            <label for="add-item-rarity"> Item Rarity: </label>
+            <select name="rarity" id="add-item-rarity">
+                <option value="common"> Common </option>
+                <option value="uncommon"> Uncommon </option>
+                <option value="rare"> Rare </option>
+                <option value="epic"> Epic </option>
+                <option value="legendary"> Legendary </option>
+            </select> <br />
+
+            <button id="add-item-submit"> Add Item </button>
+            <button id="add-item-close" commandfor="add-item-dialog" command="close"> Cancel </button> <br />
+            <span id="add-item-status-text">NAME EMPTY</span>
+        </dialog>
+
+        <a href="https://localhost:8080/auth/authorize" target="_blank" rel="noopener noreferrer"> Login with Twitch </a>
+
+        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script>
+            async function request(method, route, token, data=null) {
+                const url = `https://localhost:8080/api/${route}`
+                const response = await fetch(url, {
+                    method: method,
+                    mode: "cors",
+                    headers: {"Authorization": `Bearer ${token}`},
+                    body: data
+                })
+
+                let json = await response.json()
+                return json
+            }
+
+            window.Twitch.ext.onAuthorized(auth => {
+                console.log(auth)
+
+                request("GET", `broadcasters/${auth.userId.substring(1)}`, auth.token)
+                .then(json => {
+                    console.log(json)
+                    if (json.user_id == "") {
+                        console.log("no broadcaster")
+                    } else {
+                        console.log(json.user_id)
+                    }
+                })
+            })
+            //     // console.log(auth)
+
+            //     // populate items table
+            //     request("GET", "items", auth.token).then(updateItemsTable)
+
+            //     // add item dialog
+            //     let addItemSubmitButton = document.querySelector("#add-item-submit")
+            //     addItemSubmitButton.addEventListener("click", event => {
+            //         let itemNameE = document.querySelector("#add-item-name")
+            //         let itemDescriptionE = document.querySelector("#add-item-description")
+            //         let itemImageE = document.querySelector("#add-item-image")
+            //         let itemRarityE = document.querySelector("#add-item-rarity")
+
+            //         let statusText = document.querySelector("#add-item-status-text")
+
+            //         let data = new FormData()
+            //         data.append(itemNameE.name, itemNameE.value)
+            //         data.append(itemDescriptionE.name, itemDescriptionE.value)
+            //         data.append(itemImageE.name, itemImageE.files[0])
+            //         data.append(itemRarityE.name, itemRarityE.value)
+
+            //         request("POST", "items", auth.token, data)
+            //         .then(json => {
+            //             if (json.status_code == 400) {
+            //                 statusText.innerHTML = json.status_text
+            //             }
+            //             request("GET", "items", auth.token).then(updateItemsTable)
+            //         })
+
+            //         // try {
+            //         //     request("POST", "items", auth.token, data)
+            //         // } catch (error) {
+            //         //     console.error(error)
+            //         // } finally {
+            //         //     request("GET", "items", auth.token).then(updateItemsTable)
+            //         // }
+            //     }, false)
+
+            // })
+
+            // async function updateItemsTable(json) {
+                
+            //     let body = document.querySelector("#items-table > tbody")
+            //     body.replaceChildren()
+
+
+            //     for (let item of json) {
+            //         let imageUrlPath = `https://localhost:8080/${item.image_url}`
+            //         let row = body.insertRow()
+            //         row.innerHTML = `
+            //             <td> ${item.name} </td>
+            //             <td> ${item.description} </td>
+            //             <td> <img src="${imageUrlPath}" /> </td>
+            //             <td> ${item.rarity} </td>
+            //             <td> <button class="items-table-edit"> Edit </button> </td>
+            //         `
+            //         row.classList.add("item-row")
+            //         // row.querySelector("#items-table-edit").addEventListener("click", editItemsTable, false)
+            //     }
+            // }
+        </script>
+        <!-- <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script>
+            /*
+             * PROPERTY    TYPE    DESCRIPTION
+             * channelId   string  Channel ID of the page where the extension is iframe embedded.
+             * clientId    string  Client ID of the extension.
+             * token       JWT     JWT that should be passed to any EBS call for authentication.
+             * helixToken  JWT     JWT that can be used for front end API requests. See Using the Twitch API in an Extension Front End.
+             * userId      string  Opaque user ID.
+             * 
+             * Add the broadcaster if they're not already added.
+             * Show them the UI for CRUDding items
+             * Give them a URL they can set for the browser source
+             * Show them a panel about their stored data
+             * - let them delete everything
+             * - let them update details
+             * - ???
+             */
+            window.Twitch.ext.onAuthorized(function(auth){
+                // window.Twitch.ext.actions.requestIdShare()
+                console.log(auth)
+
+                fetch("https://localhost:8080/api/items", {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {"Authorization": `Bearer ${auth.token}`}
+                })
+                .catch(error => { console.error(error) })
+                .then(response => {return response.json()})
+                .then(json => { console.log(json) })
+
+                // fetch("https://localhost:8080/api/broadcasters", {
+                //     method:"POST",
+                //     mode:"cors",
+                //     headers: {
+                //         "Authorization": `Bearer ${auth.token}`
+                //     }
+                // })
+                // .then(response => {return response.json() })
+                // .then(json => {
+                //     console.log(json)
+                // })
+            })
+        </script> -->
+    </body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title> unbox inventory </title>
+        <style>
+            body {
+                color: white;
+            }
+            td img {
+                width: 64px;
+                height: 64px;
+                object-fit: contain;
+            }
+        </style>
+    </head>
+    <body>
+        <table id="inv-items-table">
+            <thead>
+                <tr> <th> Name </th> <th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script>
+            /*
+             * PROPERTY    TYPE    DESCRIPTION
+             * channelId   string  Channel ID of the page where the extension is iframe embedded.
+             * clientId    string  Client ID of the extension.
+             * token       JWT     JWT that should be passed to any EBS call for authentication.
+             * helixToken  JWT     JWT that can be used for front end API requests. See Using the Twitch API in an Extension Front End.
+             * userId      string  Opaque user ID.
+             * 
+             * Show the viewers inventory items (if they're new it'll be empty)
+             * Give them the option to "UNBOX AN ITEM"
+             * - can we make them use channel points without needing
+             *   the redeem to be listed for viewers to press?
+             */
+            window.Twitch.ext.onAuthorized(function(auth){
+                console.log(auth)
+                window.Twitch.ext.actions.requestIdShare()
+
+                // window.Twitch.ext.listen(`whisper-${auth.userId}`, function(target, contentType, message){
+                //     console.log(`new item: ${message}`)
+                // })
+
+                window.Twitch.ext.listen("broadcast", function(target, contentType, message){
+                    console.log(`new item: ${message}`)
+                })
+
+                populateInventoryItemsTable(auth.token)
+                .catch(console.error)
+            })
+
+            
+            async function populateInventoryItemsTable(token) {
+                let items = await get("items", token)
+                let inventoryItems = await get("inventory", token)
+
+                await updateInventoryItemsTable(items, inventoryItems)
+            }
+
+            async function updateInventoryItemsTable(items, inventoryItems) {
+                if (inventoryItems.length == 0) return
+
+                // make items a map so we can use it for lookup
+                let lookupItems = new Map()
+                items.forEach(item => { lookupItems.set(item.id, item) })
+                console.log(lookupItems)
+
+                let body = document.querySelector("#inv-items-table > tbody")
+                body.replaceChildren()
+
+                for (let inventoryItem of inventoryItems) {
+                    item = lookupItems.get(inventoryItem.item_id)
+
+                    let imageUrlPath = `https://localhost:8080/${item.image_url}`
+                    let row = body.insertRow()
+                    row.innerHTML = `
+                        <td> ${item.name} </td>
+                        <td> ${item.description} </td>
+                        <td> <img src="${imageUrlPath}" /> </td>
+                        <td> ${item.rarity} </td>
+                    `
+
+                    row.classList.add("inv-item-row")
+
+                    // <td> <button class="items-table-edit"> Edit </button> </td>
+                    // row.querySelector("#items-table-edit").addEventListener("click", editItemsTable, false)
+                }
+            }
+
+            async function get(route, token) {
+                const url = `https://localhost:8080/api/${route}`
+
+                try {
+                    const response = await fetch(url, {
+                        method: "GET",
+                        mode: "cors",
+                        headers: {"Authorization": `Bearer ${token}`},
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`)
+                    }
+                    
+                    return await response.json()
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+        </script>
+    </body>
+</html>

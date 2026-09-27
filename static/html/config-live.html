@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title> unbox inventory </title>
+        <style>
+            body {
+                color: white;
+            }
+            .item-row:hover {
+                color: black;
+                background-color: aquamarine;
+            }
+            td img {
+                width: 64px;
+                height: 64px;
+                object-fit: contain;
+            }
+        </style>
+    </head>
+    <body>
+        <table id="items-table">
+            <thead>
+                <tr> <th> Name </th> <th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button command="show-modal" commandfor="add-item-dialog"> Add Item </button>
+        <dialog id="add-item-dialog">
+            <label for="add-item-name"> Item Name: </label>
+            <input type="text" name="name" id="add-item-name" placeholder="Maddy Plush"/> <br />
+
+            <label for="add-item-description"> Item Description: </label>
+            <input type="textarea" name="description" id="add-item-description" placeholder="Super cool, really awesome, get while you can!"/> <br />
+
+            <label for="add-item-image"> Item Image: </label>
+            <input type="file" name="image" id="add-item-image"/> <br />
+
+            <label for="add-item-rarity"> Item Rarity: </label>
+            <select name="rarity" id="add-item-rarity">
+                <option value="common"> Common </option>
+                <option value="uncommon"> Uncommon </option>
+                <option value="rare"> Rare </option>
+                <option value="epic"> Epic </option>
+                <option value="legendary"> Legendary </option>
+            </select> <br />
+
+            <button id="add-item-submit"> Add Item </button>
+            <button id="add-item-close" commandfor="add-item-dialog" command="close"> Cancel </button> <br />
+            <!-- <span id="add-item-status-text">NAME EMPTY</span> -->
+        </dialog>
+
+        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script>
+
+            // holding shift deletes without warning
+            let isShiftHeld = false
+            document.addEventListener("keydown", event => {
+                if (event.shiftKey) isShiftHeld = true
+            })
+            document.addEventListener("keyup", event => {
+                if (event.shiftKey) isShiftHeld = false
+            })
+
+            Twitch.ext.onAuthorized(auth => {
+                console.log(auth)
+                
+                populateItemsTable(auth.token)
+
+                // add item dialog
+                document.querySelector("#add-item-submit").addEventListener("click", event => {
+                    let itemNameE = document.querySelector("#add-item-name")
+                    let itemDescriptionE = document.querySelector("#add-item-description")
+                    let itemImageE = document.querySelector("#add-item-image")
+                    let itemRarityE = document.querySelector("#add-item-rarity")
+
+                    // let statusText = document.querySelector("#add-item-status-text")
+
+                    let data = new FormData()
+                    data.append(itemNameE.name, itemNameE.value)
+                    data.append(itemDescriptionE.name, itemDescriptionE.value)
+                    data.append(itemImageE.name, itemImageE.files[0])
+                    data.append(itemRarityE.name, itemRarityE.value)
+
+                    itemNameE.value = null
+                    itemDescriptionE.value = null
+                    itemImageE.value = null
+                    itemRarityE.selectedIndex = 0
+
+                    post("items", auth.token, data).then(() => {
+                        populateItemsTable(auth.token)
+                    })
+                }, false)
+
+            })
+
+            function populateItemsTable(token) {
+                get("items", token)
+                .then(updateItemsTable)
+                .then(() => {
+
+                    // delete item button
+                    document.querySelectorAll(".items-table-delete").forEach(button => {
+                        button.addEventListener("click", event => {
+                            if (isShiftHeld) {
+                                let id = event.target.getAttribute("data-id")
+                                _delete(`items/${id}`, token).then(() => {
+                                    get("items", token).then(() => {
+                                        populateItemsTable(token)
+                                    })
+                                })
+                            }
+                        })
+                    }, false)
+                })
+            }
+
+            async function updateItemsTable(json) {
+                if (json.length == 0) return
+
+                let body = document.querySelector("#items-table > tbody")
+                body.replaceChildren()
+
+                for (let item of json) {
+                    let imageUrlPath = `https://localhost:8080/${item.image_url}`
+                    let row = body.insertRow()
+                    row.innerHTML = `
+                        <td> ${item.name} </td>
+                        <td> ${item.description} </td>
+                        <td> <img src="${imageUrlPath}" /> </td>
+                        <td> ${item.rarity} </td>
+                        <td> <button data-id="${item.id}" class="items-table-delete"> Delete </button> </td>
+                    `
+
+                    row.classList.add("item-row")
+
+                    // <td> <button class="items-table-edit"> Edit </button> </td>
+                    // row.querySelector("#items-table-edit").addEventListener("click", editItemsTable, false)
+                }
+            }
+
+            async function _delete(route, token) {
+                const url = `https://localhost:8080/api/${route}`
+
+                try {
+                    const response = await fetch(url, {
+                        method: "DELETE",
+                        mode: "cors",
+                        headers: {"Authorization": `Bearer ${token}`},
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`)
+                    }
+                    
+                    return
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+
+            async function post(route, token, data) {
+                const url = `https://localhost:8080/api/${route}`
+
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        mode: "cors",
+                        headers: {"Authorization": `Bearer ${token}`},
+                        body: data
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`)
+                    }
+                    
+                    return
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+
+            async function get(route, token) {
+                const url = `https://localhost:8080/api/${route}`
+                
+                try {
+                    const response = await fetch(url, {
+                        method: "GET",
+                        mode: "cors",
+                        headers: {"Authorization": `Bearer ${token}`},
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`)
+                    }
+
+                    return await response.json()
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+        </script>
+    </body>
+</html>

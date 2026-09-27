@@ -1,0 +1,8 @@
+.vscode
+unbox-inventory.code-workspace
+certs
+db/init.sql
+test
+.env
+note.txt
+todo.txt

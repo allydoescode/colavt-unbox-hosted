@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title> unbox inventory </title>
+    </head>
+    <style>
+        .dark-theme {
+            color: white;
+        }
+        .light-theme {
+            color: black;
+        }
+    </style>
+    <body>
+        <a style="display: none" id="auth-link" href="#" onclick="oauth2popup()" target="_blank" rel="noopener noreferrer"> Login with Twitch </a>
+        <div style="display: none" id="content">
+            <p> signed in as poopypoopface </p>
+        </div>
+
+        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script>
+            function oauth2popup() {
+                let w = window.open("https://localhost:8080/auth/authorize", "oauth2 login", "width=600,height=300")
+                let t = setInterval(() => {
+                    if (w.closed) {
+                        clearInterval(t)
+                        window.location.reload()
+                    }
+                }, 500)
+            }
+            async function request(method, route, token, data=null) {
+                const url = `https://localhost:8080/api/${route}`
+                const response = await fetch(url, {
+                    method: method,
+                    mode: "cors",
+                    headers: {"Authorization": `Bearer ${token}`},
+                    body: data
+                })
+
+                let json = await response.json()
+                return json
+            }
+
+            window.Twitch.ext.onAuthorized(auth => {
+                console.log(auth)
+
+                let authLink = document.querySelector("#auth-link")
+                let content = document.querySelector("#content")
+
+                request("GET", "broadcasters", auth.token)
+                .then(json => {
+                    console.log(json)
+                    if (json.user_id == "") {
+                        authLink.style.display = "block"
+                    } else {
+                        content.style.display = "block"
+                    }
+                })
+                .catch(error => console.error)
+
+            })
+
+            window.Twitch.ext.onContext((context) => {
+                document.body.classList.add(`${context.theme}-theme`)
+            });
+        </script>
+    </body>
+</html>

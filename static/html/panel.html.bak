@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title> unbox inventory </title>
+        <style>
+            body {
+                color: white;
+            }
+            .form-container {
+                display: none;
+            }
+            .image-preview {
+                width: 64px;
+                height: 64px;
+                object-fit: contain;
+            }
+        </style>
+    </head>
+    <body>
+        <button onclick="unbox()"> Unbox an Item (requires X bits)</button>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <td> ID </td>
+                        <td> Item ID </td>
+                        <td> Image </td>
+                        <td> Owner </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- {{ range .Items }}
+                    <tr>
+                        <td> {{ .ID }} </td>
+                        <td> {{ .ItemID }} </td>
+                        <td> <img class="image-preview" src="{{ .Image }}" /> </td>
+                        <td> {{ .Owner }} </td>
+                    </tr>
+                    {{ end }} -->
+                </tbody>
+            </table>
+        </div>
+        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script>
+            async function getInventoryItems(auth) {
+                console.log("getInventoryItems() called")
+                
+                // remove U from twitch user id
+                id = auth.userId.substring(1)
+
+                const url = `https://localhost:8001/inventory?owner=${id}`
+                try {
+                    const response = await fetch(url, {
+                        method:"GET",
+                        mode:"cors",
+                        headers: {
+                            "Authorization": `Bearer ${auth.token}`
+                        }
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`)
+                    }
+
+                    const items = await response.json()
+                    console.log(items)
+                    return items
+                } catch (error) {
+                    console.error(error.message)
+                }
+            }
+        </script>
+        <script>
+            Twitch.ext.onAuthorized(function(auth){
+                document.getElementsByClassName("table-container")[0].style.display = "block"
+
+                getInventoryItems(auth)
+                .then(items => {
+                    body = document.querySelector("tbody")
+
+                    for (const item of items) {
+                        body.insertRow().innerHTML = `<td> ${item.id} </td><td> ${item.item_id} </td><td> not supported </td><td> ${item.owner} </td>`
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>
