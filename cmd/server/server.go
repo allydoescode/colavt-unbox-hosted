@@ -44,11 +44,12 @@ func init() {
 	dbInitSql := os.Getenv("DATABASE_INIT_SQL")
 	clientId := os.Getenv("OAUTH2_CLIENT_ID")
 	clientSecret := os.Getenv("OAUTH2_CLIENT_SECRET")
+	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
 	redirectUrl := os.Getenv("OAUTH2_REDIRECT_URL")
 	twitchExtOwnerId = os.Getenv("TWITCH_EXT_OWNER_ID")
 
 	// TODO: can we get the secret programmatically?
-	b, err := base64.StdEncoding.DecodeString("VPE+lU49imxlb/5L4MWUqF9JMYWyg0D1rpsImg/ESjE=")
+	b, err := base64.StdEncoding.DecodeString(jwtSecretKey)
 	if err != nil {
 		log.Fatal(err)
 	}
