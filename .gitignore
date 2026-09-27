@@ -1,7 +1,7 @@
 .vscode
 unbox-inventory.code-workspace
 certs
-db/init.sql
+db/data.db
 test
 .env
 note.txt
