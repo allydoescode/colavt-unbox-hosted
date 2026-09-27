@@ -1,5 +1,5 @@
 const twitch = window.Twitch.ext
-const ebsUrl = "https://localhost:8080"
+const ebsUrl = "https://colavt-unbox.coolify.maddy.fyi"
 console.log(`${ebsUrl}/static/html/panel.html (${twitch.version}-${twitch.environment})`)
 
 const charGrid = document.getElementById('charGrid');

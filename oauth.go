@@ -86,6 +86,6 @@ func callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprint(w, "set your browser source to: https://localhost:8080/overlay/"+broadcaster.UserID+"/"+overlayToken+"\nauthentication done, close this popup to continue")
+	fmt.Fprint(w, "set your browser source to: https://colavt-unbox.coolify.maddy.fyi/overlay/"+broadcaster.UserID+"/"+overlayToken+"\nauthentication done, close this popup to continue")
 
 }

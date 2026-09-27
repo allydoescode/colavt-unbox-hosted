@@ -122,7 +122,7 @@
                 body.replaceChildren()
 
                 for (let item of json) {
-                    let imageUrlPath = `https://localhost:8080/${item.image_url}`
+                    let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
                     let row = body.insertRow()
                     row.innerHTML = `
                         <td> ${item.name} </td>
@@ -140,7 +140,7 @@
             }
 
             async function _delete(route, token) {
-                const url = `https://localhost:8080/api/${route}`
+                const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
 
                 try {
                     const response = await fetch(url, {
@@ -160,7 +160,7 @@
             }
 
             async function post(route, token, data) {
-                const url = `https://localhost:8080/api/${route}`
+                const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
 
                 try {
                     const response = await fetch(url, {
@@ -181,7 +181,7 @@
             }
 
             async function get(route, token) {
-                const url = `https://localhost:8080/api/${route}`
+                const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
                 
                 try {
                     const response = await fetch(url, {

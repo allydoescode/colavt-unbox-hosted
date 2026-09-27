@@ -30,7 +30,7 @@ function refreshHeartbeat() {
   }, 6000)
 }
 
-const url = `https://${window.location.host}/ws`
+const url = `https://colavt-unbox.coolify.maddy.fyi/ws`
 console.log(url)
 const ws = new WebSocket(url)
 ws.addEventListener("open", ev => {
@@ -104,7 +104,7 @@ function populateTape() {
     card.className = `item-card ${selectedItem.rarity}`;
     
     // UPDATED HTML TEMPLATE: Swapped old .item-icon container for a crisp image tag
-    let imageUrl = `${window.location.protocol}//${window.location.host}/${selectedItem.image_url}`
+    let imageUrl = `https://colavt-unbox.coolify.maddy.fyi/${selectedItem.image_url}`
     card.innerHTML = `
       <img class="item-card-image" src="${imageUrl}" alt="${selectedItem.name}">
       <div class="item-name">${selectedItem.name}</div>

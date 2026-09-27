@@ -13,7 +13,7 @@ function performAction(element, rid, action) {
 }
 
 function connect() {
-    ws = new WebSocket("ws://localhost:3000/ws/redemptions")
+    ws = new WebSocket("https://colavt-unbox.coolify.maddy.fyi/ws/redemptions")
 
     ws.onmessage = (e) => {
         data = JSON.parse(e.data)

@@ -34,21 +34,6 @@ export const SPINNER_CONFIG = {
   audioVolume: 0.25          
 };
 
-// ==========================================
-// 📦 GAME ITEMS POOL DEFINITIONS
-// ==========================================
-// export const itemPool = [
-//   { name: 'Rusty Dagger', icon: '🗡️', rarity: 'common', description: 'A pitted blade. Better than bare fists, barely.' },
-//   { name: 'Wooden Shield', icon: '🛡️', rarity: 'common', description: 'Splintered cedar bound by dry leather straps.' },
-//   { name: 'Cloth Hood', icon: '🥷', rarity: 'common', description: 'Worn fabric optimized to slip silently into dark alleyways.' },
-//   { name: 'Steel Sword', icon: '⚔️', rarity: 'rare', description: 'Forged under solid blacksmith iron pressure.' },
-//   { name: 'Healing Potion', icon: '🧪', rarity: 'rare', description: 'A shimmering crimson fluid smelling faintly of distilled berries.' },
-//   { name: 'Enchanted Bow', icon: '🏹', rarity: 'rare', description: 'The wood humming under an invisible atmospheric tension.' },
-//   { name: 'Wizard Staff', icon: '🔮', rarity: 'epic', description: 'Channelling raw unstable leyline plasma forces.' },
-//   { name: 'Shadow Armor', icon: '👕', rarity: 'epic', description: 'Plated mesh threads that swallow local light rays.' },
-//   { name: 'Dragon Egg', icon: '🐉', rarity: 'legendary', description: 'Radiating immense internal geothermal volcanic heat ripples.' },
-//   { name: 'Crown of Kings', icon: '👑', rarity: 'legendary', description: 'Ancient pure gold circlet commanding ultimate sovereign authority.' }
-// ];
 
 export const rarityColors = {
   common: { solid: '#888888', alpha: 'rgba(136, 136, 136, 0.4)' },
