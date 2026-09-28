@@ -103,6 +103,8 @@ func main() {
 	// api.HandleFunc("GET /broadcasters/{id}/token", getNewBroadcasterToken)
 	// api.HandleFunc("DELETE /broadcasters/{id}", deleteBroadcaster)
 
+	api.HandleFunc("GET /overlay/new", getNewOverlayToken)
+
 	// api.HandleFunc("GET /pubsub", getPubSub)
 
 	file := http.NewServeMux()
@@ -123,7 +125,6 @@ func main() {
 	mux.HandleFunc("/ws", ws)
 
 	mux.HandleFunc("/overlay/{channel_id}/{overlay_token}", getOverlay)
-	mux.HandleFunc("/overlay/new", getNewOverlayToken)
 
 	wrappedMux := chain(mux, logging, cors)
 
