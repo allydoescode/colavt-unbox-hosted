@@ -82,11 +82,18 @@
 
             copyOverlayToken.addEventListener("click", event => {
                 navigator.clipboard.writeText(overlayToken)
-                .then(() => {}, () => {})
+                .then(() => {
+                    console.log("copied overlay token to clipboard")
+                }, () => {
+                    console.log("failed to copy overlay token to clipboard")
+                })
             })
 
             resetOverlayToken.addEventListener("click", event => {
-                
+                get("overlay/new", auth.token)
+                .then(data => {
+                    overlayToken = JSON.parse(data)
+                })
             })
 
             // holding shift deletes without warning
