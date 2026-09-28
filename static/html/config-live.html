@@ -172,9 +172,7 @@
                     })
                 }, false)
 
-                document.addEventListener("load", () => {
-                    populate(auth, main)
-                })
+                populate(auth)
             })
 
             function inventory_item_delete(inventoryItemId) {
@@ -183,11 +181,10 @@
                 }
             }
 
-            function populate(auth, callback) {
+            function populate(auth) {
                 populateItemsTable(auth)
                 .then(() => {
                     populateInventoryTable(auth)
-                    .then(calllback)
                     .catch(console.error)
                 })
                 .catch(console.error)
@@ -270,7 +267,7 @@
 
                 let body = document.querySelector("#inventory-table > tbody")
                 body.replaceChildren()
-                
+
                 for (let invItem of json) {
                     let item = items.get(invItem.item_id)
                     console.log("item:", item)
