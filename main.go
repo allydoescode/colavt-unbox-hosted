@@ -123,6 +123,7 @@ func main() {
 	mux.HandleFunc("/ws", ws)
 
 	mux.HandleFunc("/overlay/{channel_id}/{overlay_token}", getOverlay)
+	mux.HandleFunc("/overlay/new", getNewOverlayToken)
 
 	wrappedMux := chain(mux, logging, cors)
 

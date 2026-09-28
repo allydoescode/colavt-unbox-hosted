@@ -19,6 +19,13 @@
         </style>
     </head>
     <body>
+        <div class="overlay-token-container">
+            <p> create a browser source with this url: </p>
+            <input type="text" id="overlayTokenInput" name="overlay-token-input" value="••••••••••••••••••••••••••••••••••••••••••" readonly />
+            <button id="copyOverlayTokenButton"> Copy </button>
+            <button id="resetOverlayTokenButton"> Reset </button> <br />
+            <button id="showOverlayTokenButton"> Show </button>
+        </div>
         <table id="items-table">
             <thead>
                 <tr> <th> Name </th> <th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
@@ -52,6 +59,35 @@
 
         <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
         <script>
+            let overlayTokenInput = document.querySelector("#overlayTokenInput")
+            let showOverlayToken = document.querySelector("#showOverlayTokenButton")
+            let copyOverlayToken = document.querySelector("#copyOverlayTokenButton")
+            let resetOverlayToken = document.querySelector("#resetOverlayTokenButton")
+
+            var overlayToken;
+            var twitchId;
+            var isShowing = false
+
+            showOverlayToken.addEventListener("click", event => {
+                if (isShowing) {
+                    let url = "••••••••••••••••••••••••••••••••••••••••••"
+                    isShowing = false
+                } else {
+                    let url = `https://colavt-unbox.coolify.maddy.fyi/overlay/${twitchId}/${overlayToken}`
+                    isShowing = true
+                }
+
+                overlayTokenInput.value = url
+            })
+
+            copyOverlayToken.addEventListener("click", event => {
+                navigator.clipboard.writeText(overlayToken)
+                .then(() => {}, () => {})
+            })
+
+            resetOverlayToken.addEventListener("click", event => {
+                
+            })
 
             // holding shift deletes without warning
             let isShiftHeld = false
@@ -64,6 +100,12 @@
 
             Twitch.ext.onAuthorized(auth => {
                 console.log(auth)
+
+                get("broadcasters", auth.token)
+                .then(broadcaster => {
+                    overlayToken = broadcaster.overlay_token
+                    twitchId = broadcaster.user_id
+                })
                 
                 populateItemsTable(auth.token)
 

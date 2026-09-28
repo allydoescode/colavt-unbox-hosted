@@ -232,6 +232,34 @@ func getBroadcaster(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func getNewOverlayToken(w http.ResponseWriter, r *http.Request) {
+	channelId, ok := r.Context().Value(ChannelIdKey).(string)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	isBroadcaster, ok := r.Context().Value(IsBroadcasterKey).(bool)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if !isBroadcaster {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	overlayToken, err := UpdateOverlayTokenForID(channelId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(overlayToken)
+	w.WriteHeader(http.StatusOK)
+}
+
 // func postBroadcaster(w http.ResponseWriter, r *http.Request) {
 // 	isBroadcaster, ok := r.Context().Value(IsBroadcasterKey).(bool)
 // 	if !ok {
