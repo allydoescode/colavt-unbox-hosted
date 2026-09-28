@@ -134,14 +134,14 @@
             Twitch.ext.onAuthorized(auth => {
                 console.log(auth)
 
-                get("broadcasters", auth.token)
+                get("broadcasters")
                 .then(broadcaster => {
                     overlayToken = broadcaster.overlay_token
                     twitchId = broadcaster.user_id
                 })
 
                 resetOverlayToken.addEventListener("click", event => {
-                    get("overlay/new", auth.token)
+                    get("overlay/new")
                     .then(data => {
                         overlayToken = JSON.parse(data)
                     })
@@ -167,31 +167,31 @@
                     itemImageE.value = null
                     itemRarityE.selectedIndex = 0
 
-                    post("items", auth.token, data).then(() => {
-                        populateItemsTable(auth.token)
+                    post("items", data).then(() => {
+                        populateItemsTable()
                     })
                 }, false)
 
-                populate(auth)
+                populate()
             })
 
             function inventory_item_delete(inventoryItemId) {
                 if (isShiftHeld) {
-                    _delete(`inventory/${inventoryItemId}`, token).then(() => { populate(auth) })
+                    _delete(`inventory/${inventoryItemId}`).then(() => { populate() })
                 }
             }
 
-            function populate(auth) {
-                populateItemsTable(auth)
+            function populate() {
+                populateItemsTable()
                 .then(() => {
-                    populateInventoryTable(auth)
+                    populateInventoryTable()
                     .catch(console.error)
                 })
                 .catch(console.error)
             }
 
-            async function populateItemsTable(auth) {
-                get("items", auth.token)
+            async function populateItemsTable() {
+                get("items")
                 .then(updateItemsTable)
                 .then(() => {
 
@@ -200,9 +200,9 @@
                         button.addEventListener("click", event => {
                             if (isShiftHeld) {
                                 let id = event.target.getAttribute("data-id")
-                                _delete(`items/${id}`, token).then(() => {
-                                    get("items", token).then(() => {
-                                        populate(auth)
+                                _delete(`items/${id}`).then(() => {
+                                    get("items").then(() => {
+                                        populate()
                                     })
                                 })
                             }
@@ -239,8 +239,8 @@
                 }
             }
 
-            async function populateInventoryTable(auth) {
-                get("inventory/all", auth.token)
+            async function populateInventoryTable() {
+                get("inventory/all")
                 .then(json => {
                     updateInventoryTable(json, auth)
                 })
@@ -250,9 +250,9 @@
                         button.addEventListener("click", event => {
                             if (isShiftHeld) {
                                 let id = event.target.getAttribute("data-id")
-                                _delete(`inventory/${id}`, token).then(() => {
-                                    get("inventory", token).then(() => {
-                                        populate(auth)
+                                _delete(`inventory/${id}`).then(() => {
+                                    get("inventory").then(() => {
+                                        populate()
                                     })
                                 })
                             }
@@ -261,7 +261,7 @@
                 })
             }
 
-            async function updateInventoryTable(json, auth) {
+            async function updateInventoryTable(json) {
                 if (json.length == 0) return
                 console.log(json)
 
@@ -280,7 +280,7 @@
                         if (displayName === undefined) console.error(`undefined in users for ${invItem.user_id}`)
                     } else {
                         console.log("new user")
-                        let user = await get_twitch_user(invItem.user_id, auth.helixToken)
+                        let user = await get_twitch_user(invItem.user_id)
                         displayName = user.data[0].display_name
                         users.set(invItem.user_id, displayName)
                         console.log(`cached ${users.get(invItem.user_id)}`)
@@ -302,7 +302,7 @@
                 }
             }
 
-            async function get_twitch_user(userId, token) {
+            async function get_twitch_user(userId) {
                 const url = `https://api.twitch.tv/helix/users?id=${userId}`
 
                 try {
@@ -310,7 +310,7 @@
                         method: "GET",
                         mode: "cors",
                         headers: {
-                            "Authorization": `Extension ${token}`,
+                            "Authorization": `Extension ${window.Twitch.ext.viewer.helixToken}`,
                             "Client-Id": "h2f87wny0eleqoc0orckxyb7li1eqo"
                         }
                     })
@@ -325,14 +325,14 @@
                 }
             }
 
-            async function _delete(route, token) {
+            async function _delete(route) {
                 const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
 
                 try {
                     const response = await fetch(url, {
                         method: "DELETE",
                         mode: "cors",
-                        headers: {"Authorization": `Bearer ${token}`}
+                        headers: {"Authorization": `Bearer ${window.Twitch.ext.viewer.sessionToken}`}
                     })
 
                     if (!response.ok) {
@@ -345,14 +345,14 @@
                 }
             }
 
-            async function post(route, token, data) {
+            async function post(route, data) {
                 const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
 
                 try {
                     const response = await fetch(url, {
                         method: "POST",
                         mode: "cors",
-                        headers: {"Authorization": `Bearer ${token}`},
+                        headers: {"Authorization": `Bearer ${window.Twitch.ext.viewer.sessionToken}`},
                         body: data
                     })
 
@@ -366,14 +366,14 @@
                 }
             }
 
-            async function get(route, token) {
+            async function get(route) {
                 const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
                 
                 try {
                     const response = await fetch(url, {
                         method: "GET",
                         mode: "cors",
-                        headers: {"Authorization": `Bearer ${token}`},
+                        headers: {"Authorization": `Bearer ${window.Twitch.ext.viewer.sessionToken}`},
                     })
 
                     if (!response.ok) {
