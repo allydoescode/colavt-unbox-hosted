@@ -260,8 +260,11 @@
                     if (users.has(invItem.user_id)) {
                         displayName = users.get(invItem.user_id)
                     } else {
-                        let user = get_twitch_user(invItem.user_id, auth.helixToken)
-                        displayName = user.data[0].display_name
+                        get_twitch_user(invItem.user_id, auth.helixToken)
+                        .then(json => {
+                            displayName = json.data[0].display_name
+                        })
+                        .catch(console.error)
                         console.log(`cached ${displayName}`)
                     }
 
