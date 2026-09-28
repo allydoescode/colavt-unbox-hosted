@@ -146,9 +146,6 @@
                         overlayToken = JSON.parse(data)
                     })
                 })
-                
-                populateItemsTable(auth)
-                populateInventoryTable(auth)
 
                 // add item dialog
                 document.querySelector("#add-item-submit").addEventListener("click", event => {
@@ -177,6 +174,14 @@
 
             })
 
+            function populate(auth) {
+                populateItemsTable(auth)
+                .then(() => {
+                    populateInventoryTable(auth)
+                })
+                .catch(console.error)
+            }
+
             function populateItemsTable(auth) {
                 get("items", auth.token)
                 .then(updateItemsTable)
@@ -189,7 +194,7 @@
                                 let id = event.target.getAttribute("data-id")
                                 _delete(`items/${id}`, token).then(() => {
                                     get("items", token).then(() => {
-                                        populateItemsTable(token)
+                                        populate(auth)
                                     })
                                 })
                             }
@@ -238,7 +243,7 @@
                                 let id = event.target.getAttribute("data-id")
                                 _delete(`inventory/${id}`, token).then(() => {
                                     get("inventory", token).then(() => {
-                                        populateInventoryTable(token)
+                                        populate(auth)
                                     })
                                 })
                             }
@@ -247,7 +252,7 @@
                 })
             }
 
-            function updateInventoryTable(json, auth) {
+            async function updateInventoryTable(json, auth) {
                 if (json.length == 0) return
                 console.log(json)
 
