@@ -269,7 +269,7 @@
                     } else {
                         get_twitch_user(invItem.user_id, auth.helixToken)
                         .then(json => {
-                            console.log(`get_twitch_user: ${json}`)
+                            console.log(json)
                             displayName = json.data[0].display_name
                         })
                         .catch(console.error)
