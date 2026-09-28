@@ -125,10 +125,10 @@
             // holding shift deletes without warning
             let isShiftHeld = false
             document.addEventListener("keydown", event => {
-                if (event.shiftKey) isShiftHeld = true
+                if (event.key === "Shift" && !isShiftHeld) isShiftHeld = true
             })
             document.addEventListener("keyup", event => {
-                if (event.shiftKey) isShiftHeld = false
+                if (event.key === "Shift" && isShiftHeld) isShiftHeld = false
             })
 
             Twitch.ext.onAuthorized(auth => {
@@ -240,6 +240,7 @@
                 })
                 .then(() => {
                     document.querySelectorAll(".inventory-table-delete").forEach(button => {
+                        console.log("delete button clicked")
                         button.addEventListener("click", event => {
                             if (isShiftHeld) {
                                 let id = event.target.getAttribute("data-id")
@@ -277,6 +278,7 @@
                         console.log(`cached ${users.get(invItem.user_id)}`)
                     }
 
+                    // BUG: sometimes this'll load before the items have
                     let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
                     let row = body.insertRow()
                     row.innerHTML = `
