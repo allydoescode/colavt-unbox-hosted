@@ -242,7 +242,7 @@
             async function populateInventoryTable() {
                 get("inventory/all")
                 .then(json => {
-                    updateInventoryTable(json, auth)
+                    updateInventoryTable(json)
                 })
                 .then(() => {
                     document.querySelectorAll(".inventory-table-delete").forEach(button => {
