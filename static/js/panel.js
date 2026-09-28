@@ -123,7 +123,7 @@ twitch.onAuthorized(auth => {
         spotlightTagline.innerText = "WHO WILL YOU BE?";
     });
 
-    twitch.listen(target, (_, _, message) => {
+    twitch.listen(target, (_, __, message) => {
         let inventoryItem = JSON.parse(message)
         console.log(`inventoryItem.user_id = ${inventoryItem.user_id}`)
         if (inventoryItem.user_id !== auth.Userid) return
