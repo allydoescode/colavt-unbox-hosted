@@ -27,6 +27,7 @@ const (
 	IsBroadcasterKey ContextKey = "is_twitch_broadcaster"
 	UserIdKey        ContextKey = "twitch_user_id"
 	ChannelIdKey     ContextKey = "twitch_channel_id"
+	OpaqueUserIdKey  ContextKey = "opaque_user_id"
 )
 
 var twitchExtOwnerId string
@@ -96,12 +97,14 @@ func main() {
 
 	api.HandleFunc("GET /inventory", getInventory)
 	// api.HandleFunc("POST /inventory/{id}", postInventory)
-	// api.HandleFunc("DELETE /inventory/{id}", deleteInventory)
+	api.HandleFunc("DELETE /inventory/{inventory_item_id}", deleteInventory)
 
 	api.HandleFunc("GET /broadcasters", getBroadcaster)
 	// api.HandleFunc("POST /broadcasters", postBroadcaster)
 	// api.HandleFunc("GET /broadcasters/{id}/token", getNewBroadcasterToken)
 	// api.HandleFunc("DELETE /broadcasters/{id}", deleteBroadcaster)
+
+	// api.HandleFunc("GET /users/{opaque_user_id}", getUser)
 
 	api.HandleFunc("GET /overlay/new", getNewOverlayToken)
 
@@ -216,10 +219,17 @@ func auth(next http.Handler) http.HandlerFunc {
 			return
 		}
 
+		opaqueUserId, ok := claims["opaque_user_id"].(string)
+		if !ok {
+			http.Error(w, "unauthorized user", http.StatusUnauthorized)
+			return
+		}
+
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, UserIdKey, userId)
 		ctx = context.WithValue(ctx, ChannelIdKey, channelId)
 		ctx = context.WithValue(ctx, IsBroadcasterKey, role == "broadcaster")
+		ctx = context.WithValue(ctx, OpaqueUserIdKey, opaqueUserId)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 

@@ -196,6 +196,33 @@ func getInventory(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func deleteInventory(w http.ResponseWriter, r *http.Request) {
+	isBroadcaster, ok := r.Context().Value(IsBroadcasterKey).(bool)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if !isBroadcaster {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	id := r.PathValue("inventory_item_id")
+	if id == "" {
+		http.Error(w, "no item id given", http.StatusBadRequest)
+		return
+	}
+
+	err := DeleteInventoryItem(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 // func postInventory(w http.ResponseWriter, r *http.Request) {
 
 // }
@@ -231,6 +258,49 @@ func getBroadcaster(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(broadcaster)
 	w.WriteHeader(http.StatusOK)
 }
+
+// func getUser(w http.ResponseWriter, r *http.Request) {
+// 	userId, ok := r.Context().Value(UserIdKey).(string)
+// 	if !ok {
+// 		http.Error(w, "unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	opaqueUserId, ok := r.Context().Value(OpaqueUserIdKey).(string)
+// 	if !ok {
+// 		http.Error(w, "unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	user, err := GetUserForOpaqueID(userId)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }
+
+// func postUser(w http.ResponseWriter, r *http.Request) {
+// 	userId, ok := r.Context().Value(UserIdKey).(string)
+// 	if !ok {
+// 		http.Error(w, "unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	opaqueUserId, ok := r.Context().Value(OpaqueUserIdKey).(string)
+// 	if !ok {
+// 		http.Error(w, "unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	user := User{OpaqueUserID: opaqueUserId, UserID: userId}
+// 	err := CreateUser(user)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	w.WriteHeader(http.StatusOK)
+// }
 
 func getNewOverlayToken(w http.ResponseWriter, r *http.Request) {
 	channelId, ok := r.Context().Value(ChannelIdKey).(string)

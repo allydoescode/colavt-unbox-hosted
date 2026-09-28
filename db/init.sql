@@ -26,3 +26,8 @@ CREATE TABLE IF NOT EXISTS "broadcasters" (
   "overlay_token" TEXT,
   "reward_id" TEXT
 )
+
+-- CREATE TABLE IF NOT EXISTS "users" (
+--   "opaque_user_id" TEXT NOT NULL,
+--   "user_id" TEXT NOT NULL
+-- )

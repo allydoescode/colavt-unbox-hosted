@@ -32,39 +32,70 @@
             <button id="resetOverlayTokenButton"> Reset </button>
             <button id="showOverlayTokenButton"> Show </button>
         </div>
-        <table id="items-table">
-            <thead>
-                <tr> <th> Name </th> <th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <button command="show-modal" commandfor="add-item-dialog"> Add Item </button>
-        <dialog id="add-item-dialog">
-            <label for="add-item-name"> Item Name: </label>
-            <input type="text" name="name" id="add-item-name" placeholder="Maddy Plush"/> <br />
 
-            <label for="add-item-description"> Item Description: </label>
-            <input type="textarea" name="description" id="add-item-description" placeholder="Super cool, really awesome, get while you can!"/> <br />
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'items')"> Items </button>
+            <button class="tablinks" onclick="openTab(event, 'inventory')"> Inventory </button>
+        </div>
 
-            <label for="add-item-image"> Item Image: </label>
-            <input type="file" name="image" id="add-item-image"/> <br />
+        <div id="items" class="tabcontent">
+            <table id="items-table">
+                <thead>
+                    <tr> <th> Name </th> <th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button command="show-modal" commandfor="add-item-dialog"> Add Item </button>
+            <dialog id="add-item-dialog">
+                <label for="add-item-name"> Item Name: </label>
+                <input type="text" name="name" id="add-item-name" placeholder="Maddy Plush"/> <br />
 
-            <label for="add-item-rarity"> Item Rarity: </label>
-            <select name="rarity" id="add-item-rarity">
-                <option value="common"> Common </option>
-                <option value="uncommon"> Uncommon </option>
-                <option value="rare"> Rare </option>
-                <option value="epic"> Epic </option>
-                <option value="legendary"> Legendary </option>
-            </select> <br />
+                <label for="add-item-description"> Item Description: </label>
+                <input type="textarea" name="description" id="add-item-description" placeholder="Super cool, really awesome, get while you can!"/> <br />
 
-            <button id="add-item-submit"> Add Item </button>
-            <button id="add-item-close" commandfor="add-item-dialog" command="close"> Cancel </button> <br />
-            <!-- <span id="add-item-status-text">NAME EMPTY</span> -->
-        </dialog>
+                <label for="add-item-image"> Item Image: </label>
+                <input type="file" name="image" id="add-item-image"/> <br />
+
+                <label for="add-item-rarity"> Item Rarity: </label>
+                <select name="rarity" id="add-item-rarity">
+                    <option value="common"> Common </option>
+                    <option value="uncommon"> Uncommon </option>
+                    <option value="rare"> Rare </option>
+                    <option value="epic"> Epic </option>
+                    <option value="legendary"> Legendary </option>
+                </select> <br />
+
+                <button id="add-item-submit"> Add Item </button>
+                <button id="add-item-close" commandfor="add-item-dialog" command="close"> Cancel </button> <br />
+                <!-- <span id="add-item-status-text">NAME EMPTY</span> -->
+            </dialog>
+        </div>
+
+        <div id="inventory" class="tabcontent">
+            <table id="inventory-table">
+                <thead>
+                    <tr> <th> User </th> <th> Name </th><th> Description </th> <th> Image </th> <th> Rarity </th> <th></th> </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
         <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
         <script>
+            function openTab(event, name) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(name).style.display = "block";
+                event.currentTarget.className += " active";
+            }
+
             let overlayTokenInput = document.querySelector("#overlayTokenInput")
             let showOverlayToken = document.querySelector("#showOverlayTokenButton")
             let copyOverlayToken = document.querySelector("#copyOverlayTokenButton")
@@ -73,6 +104,8 @@
             var overlayToken;
             var twitchId;
             var isShowing = false
+
+            var items = new Map()
 
             showOverlayToken.addEventListener("click", event => {
                 let url;
@@ -169,7 +202,11 @@
                 let body = document.querySelector("#items-table > tbody")
                 body.replaceChildren()
 
+                items.clear()
+
                 for (let item of json) {
+                    items.set(item.id, item)
+
                     let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
                     let row = body.insertRow()
                     row.innerHTML = `
@@ -184,6 +221,46 @@
 
                     // <td> <button class="items-table-edit"> Edit </button> </td>
                     // row.querySelector("#items-table-edit").addEventListener("click", editItemsTable, false)
+                }
+            }
+
+            function populateInventoryTable(token) {
+                get("inventory", token)
+                .then(updateInventoryTable)
+                .then(() => {
+                    document.querySelectorAll(".inventory-table-delete").forEach(button => {
+                        button.addEventListener("click", event => {
+                            if (isShiftHeld) {
+                                let id = event.target.getAttribute("data-id")
+                                _delete(`inventory/${id}`, token).then(() => {
+                                    get("inventory", token).then(() => {
+                                        populateInventoryTable(token)
+                                    })
+                                })
+                            }
+                        })
+                    }, false)
+                })
+            }
+
+            function updateInventoryTable(json) {
+                if (json.length == 0) return
+
+                let body = document.querySelector("#inventory-table > tbody")
+                for (let invItem of json) {
+                    let item = items.get(invItem.item_id)
+
+                    let row = body.insertRow()
+                    row.innerHTML = `
+                        <td> ${invItem.user_id} </td>
+                        <td> ${item.name} </td>
+                        <td> ${item.description} </td>
+                        <td> <img src="${imageUrlPath}" /> </td>
+                        <td> ${item.rarity} </td>
+                        <td> <button data-id="${invItem.id}" class="inventory-table-delete"> Delete </button> </td>
+                    `
+
+                    row.classList.add("item-row")
                 }
             }
 
