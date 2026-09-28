@@ -77,7 +77,7 @@ twitch.onAuthorized(auth => {
     }
 
     console.log(auth)
-    let target = `whisper-${auth.userId}`
+    let target = "broadcast"
     console.log(`listening on ${target}`)
 
     let items = getEndpoint("items", auth.token)
@@ -123,7 +123,9 @@ twitch.onAuthorized(auth => {
         spotlightTagline.innerText = "WHO WILL YOU BE?";
     });
 
-    twitch.listen(target, (_, __, message) => {
+    twitch.listen(target, (target, _, message) => {
+        console.log(`received broadcast for ${target}`)
+        console.log(`we are ${auth.userId}`)
         let inventoryItem = JSON.parse(message)
         console.log(`inventoryItem.item_id = ${inventoryItem.item_id}`)
         if (inventoryItemIds.has(inventoryItem.item_id)) return

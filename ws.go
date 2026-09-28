@@ -242,7 +242,7 @@ func sendPubSubMessage(ctx context.Context, event twitch.EventChannelChannelPoin
 		return err
 	}
 
-	target := []string{fmt.Sprintf("whisper-U%s", event.UserID)} // TODO: is this opaque user related? need to test with others
+	target := []string{"broadcast"} // TODO: is this opaque user related? need to test with others
 	log.Printf("pubsub: sending to target %s\n", target)
 
 	claims := jwt.MapClaims{
