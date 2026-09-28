@@ -21,8 +21,14 @@
     <body>
         <div class="overlay-token-container">
             <p> create a browser source with this url: </p>
-            <input type="text" id="overlayTokenInput" size="80" name="overlay-token-input" value="••••••••••••••••••••••••••••••••••••••••••" readonly />
-            <!-- <button id="copyOverlayTokenButton"> Copy </button> -->
+            <input
+                type="text"
+                id="overlayTokenInput"
+                size="80"
+                name="overlay-token-input"
+                value="••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••"
+                readonly
+            /> <br />
             <button id="resetOverlayTokenButton"> Reset </button>
             <button id="showOverlayTokenButton"> Show </button>
         </div>
@@ -82,22 +88,6 @@
                 overlayTokenInput.value = url
             })
 
-            // copyOverlayToken.addEventListener("click", event => {
-            //     navigator.clipboard.writeText(overlayToken)
-            //     .then(() => {
-            //         console.log("copied overlay token to clipboard")
-            //     }, () => {
-            //         console.log("failed to copy overlay token to clipboard")
-            //     })
-            // })
-
-            resetOverlayToken.addEventListener("click", event => {
-                get("overlay/new", auth.token)
-                .then(data => {
-                    overlayToken = JSON.parse(data)
-                })
-            })
-
             // holding shift deletes without warning
             let isShiftHeld = false
             document.addEventListener("keydown", event => {
@@ -114,6 +104,13 @@
                 .then(broadcaster => {
                     overlayToken = broadcaster.overlay_token
                     twitchId = broadcaster.user_id
+                })
+
+                resetOverlayToken.addEventListener("click", event => {
+                    get("overlay/new", auth.token)
+                    .then(data => {
+                        overlayToken = JSON.parse(data)
+                    })
                 })
                 
                 populateItemsTable(auth.token)
