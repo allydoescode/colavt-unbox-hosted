@@ -266,9 +266,11 @@
 
                     let displayName
                     if (users.has(invItem.user_id)) {
+                        console.log("existing user")
                         displayName = users.get(invItem.user_id)
-                        if (displayName == undefined) console.error(`undefined in users for ${invItem.user_id}`)
+                        if (displayName === undefined) console.error(`undefined in users for ${invItem.user_id}`)
                     } else {
+                        console.log("new user")
                         get_twitch_user(invItem.user_id, auth.helixToken)
                         .then(json => {
                             console.log(json)
