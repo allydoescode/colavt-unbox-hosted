@@ -251,6 +251,7 @@
                 for (let invItem of json) {
                     let item = items.get(invItem.item_id)
 
+                    let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
                     let row = body.insertRow()
                     row.innerHTML = `
                         <td> ${invItem.user_id} </td>
