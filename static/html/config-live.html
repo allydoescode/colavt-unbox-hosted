@@ -275,6 +275,7 @@
                         .then(json => {
                             console.log(json)
                             displayName = json.data[0].display_name
+                            users.set(invItem.user_id, displayName)
                             console.log(`cached ${displayName}`)
                         })
                         .catch(console.error)
