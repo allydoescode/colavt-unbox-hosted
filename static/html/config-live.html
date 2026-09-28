@@ -106,6 +106,7 @@
             var isShowing = false
 
             var items = new Map()
+            var users = new Map()
 
             showOverlayToken.addEventListener("click", event => {
                 let url;
@@ -146,8 +147,8 @@
                     })
                 })
                 
-                populateItemsTable(auth.token)
-                populateInventoryTable(auth.token)
+                populateItemsTable(auth)
+                populateInventoryTable(auth)
 
                 // add item dialog
                 document.querySelector("#add-item-submit").addEventListener("click", event => {
@@ -176,8 +177,8 @@
 
             })
 
-            function populateItemsTable(token) {
-                get("items", token)
+            function populateItemsTable(auth) {
+                get("items", auth.token)
                 .then(updateItemsTable)
                 .then(() => {
 
@@ -225,9 +226,11 @@
                 }
             }
 
-            function populateInventoryTable(token) {
-                get("inventory", token)
-                .then(updateInventoryTable)
+            function populateInventoryTable(auth) {
+                get("inventory", auth.token)
+                .then(json => {
+                    updateInventoryTable(json, auth)
+                })
                 .then(() => {
                     document.querySelectorAll(".inventory-table-delete").forEach(button => {
                         button.addEventListener("click", event => {
@@ -244,7 +247,7 @@
                 })
             }
 
-            function updateInventoryTable(json) {
+            function updateInventoryTable(json, auth) {
                 if (json.length == 0) return
                 console.log(json)
 
@@ -253,10 +256,19 @@
                     let item = items.get(invItem.item_id)
                     console.log(item)
 
+                    let displayName
+                    if (users.has(invItem.user_id)) {
+                        displayName = users.get(invItem.user_id)
+                    } else {
+                        let user = get_twitch_user(invItem.user_id, auth.helixToken)
+                        displayName = user.data[0].display_name
+                        console.log(`cached ${displayName}`)
+                    }
+
                     let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
                     let row = body.insertRow()
                     row.innerHTML = `
-                        <td> ${invItem.user_id} </td>
+                        <td> ${displayName} </td>
                         <td> ${item.name} </td>
                         <td> ${item.description} </td>
                         <td> <img src="${imageUrlPath}" /> </td>
@@ -268,6 +280,26 @@
                 }
             }
 
+            async function get_twitch_user(userId, token) {
+                const url = `https://api.twitch.tv/helix/users?id=${userId}`
+
+                try {
+                    const response = await fetch(url, {
+                        method: "GET",
+                        mode: "cors",
+                        headers: {"Authorization": `Bearer ${token}`}
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`)
+                    }
+
+                    return await response.json()
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+
             async function _delete(route, token) {
                 const url = `https://colavt-unbox.coolify.maddy.fyi/api/${route}`
 
@@ -275,7 +307,7 @@
                     const response = await fetch(url, {
                         method: "DELETE",
                         mode: "cors",
-                        headers: {"Authorization": `Bearer ${token}`},
+                        headers: {"Authorization": `Bearer ${token}`}
                     })
 
                     if (!response.ok) {
