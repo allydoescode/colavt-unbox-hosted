@@ -172,17 +172,19 @@
                     })
                 }, false)
 
+                populate(auth)
             })
 
             function populate(auth) {
                 populateItemsTable(auth)
                 .then(() => {
                     populateInventoryTable(auth)
+                    .catch(console.error)
                 })
                 .catch(console.error)
             }
 
-            function populateItemsTable(auth) {
+            async function populateItemsTable(auth) {
                 get("items", auth.token)
                 .then(updateItemsTable)
                 .then(() => {
@@ -231,7 +233,7 @@
                 }
             }
 
-            function populateInventoryTable(auth) {
+            async function populateInventoryTable(auth) {
                 get("inventory/all", auth.token)
                 .then(json => {
                     updateInventoryTable(json, auth)
