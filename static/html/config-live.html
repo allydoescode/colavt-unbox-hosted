@@ -287,7 +287,10 @@
                     const response = await fetch(url, {
                         method: "GET",
                         mode: "cors",
-                        headers: {"Authorization": `Bearer ${token}`}
+                        headers: {
+                            "Authorization": `Extension ${token}`,
+                            "Client-Id": "h2f87wny0eleqoc0orckxyb7li1eqo"
+                        }
                     })
 
                     if (!response.ok) {
