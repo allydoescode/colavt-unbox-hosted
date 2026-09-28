@@ -20,6 +20,29 @@ func DeleteInventoryItem(id string) error {
 	return err
 }
 
+func getAllInventoryItems(channelId string) ([]InventoryItem, error) {
+	rows, err := DB.Query(`SELECT * FROM inventory WHERE channel_id = ?`, channelId)
+	if err != nil {
+		return nil, err
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+	defer rows.Close()
+
+	items := []InventoryItem{}
+	for rows.Next() {
+		item := InventoryItem{}
+		err := rows.Scan(&item.ID, &item.ChannelID, &item.ItemID, &item.UserID)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+
+	return items, nil
+}
+
 func GetInventoryItems(channelId, userId string) ([]InventoryItem, error) {
 	rows, err := DB.Query(`SELECT * FROM inventory WHERE channel_id = ? AND user_id = ?`, channelId, userId)
 	if err != nil {

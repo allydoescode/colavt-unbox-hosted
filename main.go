@@ -96,6 +96,7 @@ func main() {
 	api.HandleFunc("DELETE /items/{item_id}", deleteItems)
 
 	api.HandleFunc("GET /inventory", getInventory)
+	api.HandleFunc("GET /inventory/all", getAllInventory)
 	// api.HandleFunc("POST /inventory/{id}", postInventory)
 	api.HandleFunc("DELETE /inventory/{inventory_item_id}", deleteInventory)
 

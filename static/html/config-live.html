@@ -227,7 +227,7 @@
             }
 
             function populateInventoryTable(auth) {
-                get("inventory", auth.token)
+                get("inventory/all", auth.token)
                 .then(json => {
                     updateInventoryTable(json, auth)
                 })

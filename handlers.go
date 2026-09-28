@@ -173,6 +173,23 @@ func deleteItems(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func getAllInventory(w http.ResponseWriter, r *http.Request) {
+	channelId, ok := r.Context().Value(ChannelIdKey).(string)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	item, err := getAllInventoryItems(channelId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	json.NewEncoder(w).Encode(item)
+	w.WriteHeader(http.StatusOK)
+}
+
 func getInventory(w http.ResponseWriter, r *http.Request) {
 	channelId, ok := r.Context().Value(ChannelIdKey).(string)
 	if !ok {
