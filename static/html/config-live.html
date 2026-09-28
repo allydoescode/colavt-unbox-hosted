@@ -262,18 +262,20 @@
                 for (let invItem of json) {
                     let item = items.get(invItem.item_id)
                     console.log(item)
+                    console.log(invItem)
 
                     let displayName
                     if (users.has(invItem.user_id)) {
                         displayName = users.get(invItem.user_id)
+                        if (displayName == undefined) console.error(`undefined in users for ${invItem.user_id}`)
                     } else {
                         get_twitch_user(invItem.user_id, auth.helixToken)
                         .then(json => {
                             console.log(json)
                             displayName = json.data[0].display_name
+                            console.log(`cached ${displayName}`)
                         })
                         .catch(console.error)
-                        console.log(`cached ${displayName}`)
                     }
 
                     let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
