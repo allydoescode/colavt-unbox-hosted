@@ -246,10 +246,12 @@
 
             function updateInventoryTable(json) {
                 if (json.length == 0) return
+                console.log(json)
 
                 let body = document.querySelector("#inventory-table > tbody")
                 for (let invItem of json) {
                     let item = items.get(invItem.item_id)
+                    console.log(item)
 
                     let imageUrlPath = `https://colavt-unbox.coolify.maddy.fyi/${item.image_url}`
                     let row = body.insertRow()
