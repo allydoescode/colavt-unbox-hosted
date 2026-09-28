@@ -172,13 +172,22 @@
                     })
                 }, false)
 
-                populate(auth)
+                document.addEventListener("load", () => {
+                    populate(auth, main)
+                })
             })
 
-            function populate(auth) {
+            function inventory_item_delete(inventoryItemId) {
+                if (isShiftHeld) {
+                    _delete(`inventory/${inventoryItemId}`, token).then(() => { populate(auth) })
+                }
+            }
+
+            function populate(auth, callback) {
                 populateItemsTable(auth)
                 .then(() => {
                     populateInventoryTable(auth)
+                    .then(calllback)
                     .catch(console.error)
                 })
                 .catch(console.error)
@@ -260,6 +269,8 @@
                 console.log(json)
 
                 let body = document.querySelector("#inventory-table > tbody")
+                body.replaceChildren()
+                
                 for (let invItem of json) {
                     let item = items.get(invItem.item_id)
                     console.log("item:", item)
@@ -287,7 +298,7 @@
                         <td> ${item.description} </td>
                         <td> <img src="${imageUrlPath}" /> </td>
                         <td> ${item.rarity} </td>
-                        <td> <button data-id="${invItem.id}" class="inventory-table-delete"> Delete </button> </td>
+                        <td> <button onclick="inventory_item_delete(${invItem.id})" data-id="${invItem.id}" class="inventory-table-delete"> Delete </button> </td>
                     `
 
                     row.classList.add("item-row")
