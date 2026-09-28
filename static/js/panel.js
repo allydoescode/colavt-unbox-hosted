@@ -71,12 +71,13 @@ function addCellEvents(cell, item) {
 
 // TODO: will this fire more than once and fuck things up?
 twitch.onAuthorized(auth => {
+    console.log(auth)
+    
     if (!twitch.viewer.isLinked) {
         twitch.actions.requestIdShare()
         return
     }
 
-    console.log(auth)
     let target = "broadcast"
     console.log(`listening on ${target}`)
 
